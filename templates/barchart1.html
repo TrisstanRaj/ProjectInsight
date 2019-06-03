@@ -1,0 +1,644 @@
+{%  extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ title }}</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.5.0"></script>
+    <style>
+        a{padding-left: 10px;
+        padding-right: 10px;}
+    </style>
+</head>
+
+<body>
+  <center>
+    <h1>{{ title }}</h1>
+  <form id="dateform" name="dateform" method="POST">
+      Start Date:
+       <select name="startday">
+           <option value ="0">Day</option>
+           <option value ="1">1</option>
+           <option value ="2">2</option>
+           <option value ="3">3</option>
+           <option value ="4">4</option>
+           <option value ="5">5</option>
+           <option value ="6">6</option>
+           <option value ="7">7</option>
+           <option value ="8">8</option>
+           <option value ="9">9</option>
+           <option value ="10">10</option>
+           <option value ="11">11</option>
+           <option value ="12">12</option>
+           <option value ="13">13</option>
+           <option value ="14">14</option>
+           <option value ="15">15</option>
+           <option value ="16">16</option>
+           <option value ="17">17</option>
+           <option value ="18">18</option>
+           <option value ="19">19</option>
+           <option value ="20">20</option>
+           <option value ="21">21</option>
+           <option value ="22">22</option>
+           <option value ="23">23</option>
+           <option value ="24">24</option>
+           <option value ="25">25</option>
+           <option value ="26">26</option>
+           <option value ="27">27</option>
+           <option value ="28">28</option>
+           <option value ="29">29</option>
+           <option value ="30">30</option>
+           <option value ="31">31</option>
+
+
+</select>
+  <select name="startmonth">
+      <option value="0">Month</option>
+      <option value="1">January</option>
+      <option value="2">February</option>
+      <option value="3">March</option>
+      <option value="4">April</option>
+      <option value="5">May</option>
+      <option value="6">June</option>
+      <option value="7">July</option>
+      <option value="8">August</option>
+      <option value="9">September</option>
+      <option value="10">October</option>
+      <option value="11">November</option>
+      <option value="12">December</option>
+
+
+
+</select>
+  <select name="startyear">
+  <option value="2018">Year</option>
+      <option value="2018">2018</option>
+      <option value="2019">2019</option>
+</select>
+<br>
+      End Date:
+    <select name="endday">
+<option value ="0">Day</option>
+           <option value ="1">1</option>
+           <option value ="2">2</option>
+           <option value ="3">3</option>
+           <option value ="4">4</option>
+           <option value ="5">5</option>
+           <option value ="6">6</option>
+           <option value ="7">7</option>
+           <option value ="8">8</option>
+           <option value ="9">9</option>
+           <option value ="10">10</option>
+           <option value ="11">11</option>
+           <option value ="12">12</option>
+           <option value ="13">13</option>
+           <option value ="14">14</option>
+           <option value ="15">15</option>
+           <option value ="16">16</option>
+           <option value ="17">17</option>
+           <option value ="18">18</option>
+           <option value ="19">19</option>
+           <option value ="20">20</option>
+           <option value ="21">21</option>
+           <option value ="22">22</option>
+           <option value ="23">23</option>
+           <option value ="24">24</option>
+           <option value ="25">25</option>
+           <option value ="26">26</option>
+           <option value ="27">27</option>
+           <option value ="28">28</option>
+           <option value ="29">29</option>
+           <option value ="30">30</option>
+           <option value ="31">31</option>
+</select>
+  <select name="endmonth">
+  <option value="0">Month</option>
+      <option value="1">January</option>
+      <option value="2">February</option>
+      <option value="3">March</option>
+      <option value="4">April</option>
+      <option value="5">May</option>
+      <option value="6">June</option>
+      <option value="7">July</option>
+      <option value="8">August</option>
+      <option value="9">September</option>
+      <option value="10">October</option>
+      <option value="11">November</option>
+      <option value="12">December</option>
+</select>
+  <select name="endyear">
+  <option value="2018">Year</option>
+      <option value="2018">2018</option>
+      <option value="2019">2019</option>
+
+</select>
+      <br>
+      Agent:
+      <select name="agentnumber">
+          <option value="all">All Agents</option>
+          <option value="101">Agent 101</option>
+          <option value="102">Agent 102</option>
+          <option value="103">Agent 103</option>
+          <option value="104">Agent 104</option>
+          <option value="105">Agent 105</option>
+          <option value="106">Agent 106</option>
+          <option value="107">Agent 107</option>
+          <option value="108">Agent 108</option>
+          <option value="109">Agent 109</option>
+
+      </select>
+      <input type = "submit" value = "Submit">
+  </form>
+  <p>{{ startdate }} - {{ enddate }}</p>
+  <p>Agent: {{ agent }}</p>
+      <p>Answered: <b>{{ totalanswered }}</b>     Not Answered: <b>{{ totalnoanswer }}</b>     Busy: <b>{{ totalbusy }}</b>     Failed: <b>{{ totalfailed }}</b> </p>
+  <br>
+
+  </center>
+  <center>
+    <canvas id="myChart" width="500" height="150"></canvas>
+    <script>
+      Chart.defaults.groupableBar = Chart.helpers.clone(Chart.defaults.bar);
+
+var helpers = Chart.helpers;
+Chart.controllers.groupableBar = Chart.controllers.bar.extend({
+  calculateBarX: function (index, datasetIndex) {
+    // position the bars based on the stack index
+    var stackIndex = this.getMeta().stackIndex;
+    return Chart.controllers.bar.prototype.calculateBarX.apply(this, [index, stackIndex]);
+  },
+
+  hideOtherStacks: function (datasetIndex) {
+    var meta = this.getMeta();
+    var stackIndex = meta.stackIndex;
+
+    this.hiddens = [];
+    for (var i = 0; i <= datasetIndex; i++) {
+      var dsMeta = this.chart.getDatasetMeta(i);
+      if (dsMeta.stackIndex !== stackIndex) {
+        this.hiddens.push(dsMeta.hidden);
+        dsMeta.hidden = true;
+      }
+    }
+  },
+
+  unhideOtherStacks: function (datasetIndex) {
+    var meta = this.getMeta();
+    var stackIndex = meta.stackIndex;
+
+    for (var i = 0; i <= datasetIndex; i++) {
+      var dsMeta = this.chart.getDatasetMeta(i);
+      if (dsMeta.stackIndex !== stackIndex) {
+        dsMeta.hidden = this.hiddens.unshift();
+      }
+    }
+  },
+
+  calculateBarY: function (index, datasetIndex) {
+    this.hideOtherStacks(datasetIndex);
+    var barY = Chart.controllers.bar.prototype.calculateBarY.apply(this, [index, datasetIndex]);
+    this.unhideOtherStacks(datasetIndex);
+    return barY;
+  },
+
+  calculateBarBase: function (datasetIndex, index) {
+    this.hideOtherStacks(datasetIndex);
+    var barBase = Chart.controllers.bar.prototype.calculateBarBase.apply(this, [datasetIndex, index]);
+    this.unhideOtherStacks(datasetIndex);
+    return barBase;
+  },
+
+  getBarCount: function () {
+    var stacks = [];
+
+    // put the stack index in the dataset meta
+    Chart.helpers.each(this.chart.data.datasets, function (dataset, datasetIndex) {
+      var meta = this.chart.getDatasetMeta(datasetIndex);
+      if (meta.bar && this.chart.isDatasetVisible(datasetIndex)) {
+        var stackIndex = stacks.indexOf(dataset.stack);
+        if (stackIndex === -1) {
+          stackIndex = stacks.length;
+          stacks.push(dataset.stack);
+        }
+        meta.stackIndex = stackIndex;
+      }
+    }, this);
+
+    this.getMeta().stacks = stacks;
+    return stacks.length;
+  },
+});
+
+ var barData = {
+        labels : [
+          {% for item in labels %}
+           "{{ item|safe }}",
+          {% endfor %}
+	],
+        datasets :
+            [
+                                {
+          label:"Answered",
+          data : [
+            {% for item in agentlist[0][0] %}
+               "{{ item }}",
+              {% endfor %}
+	    ],backgroundColor:'#6be976',
+                stack:1
+          },
+            {
+                label:"Not Answered",
+                data:[
+                {% for item in agentlist[0][1] %}
+               "{{ item }}",
+              {% endfor %}
+                ],backgroundColor: "#e396e7",
+            stack:1
+
+            },
+                {
+                label:"Busy",
+                data:[
+                {% for item in agentlist[0][2] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#9395e7",
+                stack:1
+
+            },
+            {
+                label:"Failed",
+                data:[
+                {% for item in agentlist[0][3] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#e78498",
+                stack:1
+
+            },
+            {
+          label:"Answered",
+          data : [
+            {% for item in agentlist[1][0] %}
+               "{{ item }}",
+              {% endfor %}
+	    ],backgroundColor:'#6be976',
+                stack:2
+          },
+            {
+                label:"Not Answered",
+                data:[
+                {% for item in agentlist[1][1] %}
+               "{{ item }}",
+              {% endfor %}
+                ],backgroundColor: "#e396e7",
+            stack:2
+
+            },
+                {
+                label:"Busy",
+                data:[
+                {% for item in agentlist[1][2] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#9395e7",
+                stack:2
+
+            },
+            {
+                label:"Failed",
+                data:[
+                {% for item in agentlist[1][3] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#e78498",
+                stack:2
+
+            },
+            {
+          label:"Answered",
+          data : [
+            {% for item in agentlist[2][0] %}
+               "{{ item }}",
+              {% endfor %}
+	    ],backgroundColor:'#6be976',
+                stack:3
+          },
+            {
+                label:"Not Answered",
+                data:[
+                {% for item in agentlist[2][1] %}
+               "{{ item }}",
+              {% endfor %}
+                ],backgroundColor: "#e396e7",
+            stack:3
+
+            },
+                {
+                label:"Busy",
+                data:[
+                {% for item in agentlist[2][2] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#9395e7",
+                stack:3
+
+            },
+            {
+                label:"Failed",
+                data:[
+                {% for item in agentlist[2][3] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#e78498",
+                stack:3
+
+            },
+            {
+          label:"Answered",
+          data : [
+            {% for item in agentlist[3][0] %}
+               "{{ item }}",
+              {% endfor %}
+	    ],backgroundColor:'#6be976',
+                stack:4
+          },
+            {
+                label:"Not Answered",
+                data:[
+                {% for item in agentlist[3][1] %}
+               "{{ item }}",
+              {% endfor %}
+                ],backgroundColor: "#e396e7",
+            stack:4
+
+            },
+                {
+                label:"Busy",
+                data:[
+                {% for item in agentlist[3][2] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#9395e7",
+                stack:4
+
+            },
+            {
+                label:"Failed",
+                data:[
+                {% for item in agentlist[3][3] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#e78498",
+                stack:4
+
+            },
+            {
+          label:"Answered",
+          data : [
+            {% for item in agentlist[4][0] %}
+               "{{ item }}",
+              {% endfor %}
+	    ],backgroundColor:'#6be976',
+                stack:5
+          },
+            {
+                label:"Not Answered",
+                data:[
+                {% for item in agentlist[4][1] %}
+               "{{ item }}",
+              {% endfor %}
+                ],backgroundColor: "#e396e7",
+            stack:5
+
+            },
+                {
+                label:"Busy",
+                data:[
+                {% for item in agentlist[4][2] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#9395e7",
+                stack:5
+
+            },
+            {
+                label:"Failed",
+                data:[
+                {% for item in agentlist[4][3] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#e78498",
+                stack:5
+
+            },
+            {
+          label:"Answered",
+          data : [
+            {% for item in agentlist[5][0] %}
+               "{{ item }}",
+              {% endfor %}
+	    ],backgroundColor:'#6be976',
+                stack:6
+          },
+            {
+                label:"Not Answered",
+                data:[
+                {% for item in agentlist[5][1] %}
+               "{{ item }}",
+              {% endfor %}
+                ],backgroundColor: "#e396e7",
+            stack:6
+
+            },
+                {
+                label:"Busy",
+                data:[
+                {% for item in agentlist[5][2] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#9395e7",
+                stack:6
+
+            },
+            {
+                label:"Failed",
+                data:[
+                {% for item in agentlist[5][3] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#e78498",
+                stack:6
+
+            },
+            {
+          label:"Answered",
+          data : [
+            {% for item in agentlist[6][0] %}
+               "{{ item }}",
+              {% endfor %}
+	    ],backgroundColor:'#6be976',
+                stack:7
+          },
+            {
+                label:"Not Answered",
+                data:[
+                {% for item in agentlist[6][1] %}
+               "{{ item }}",
+              {% endfor %}
+                ],backgroundColor: "#e396e7",
+            stack:7
+
+            },
+                {
+                label:"Busy",
+                data:[
+                {% for item in agentlist[6][2] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#9395e7",
+                stack:7
+
+            },
+            {
+                label:"Failed",
+                data:[
+                {% for item in agentlist[6][3] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#e78498",
+                stack:7
+
+            },
+            {
+          label:"Answered",
+          data : [
+            {% for item in agentlist[7][0] %}
+               "{{ item }}",
+              {% endfor %}
+	    ],backgroundColor:'#6be976',
+                stack:8
+          },
+            {
+                label:"Not Answered",
+                data:[
+                {% for item in agentlist[7][1] %}
+               "{{ item }}",
+              {% endfor %}
+                ],backgroundColor: "#e396e7",
+            stack:8
+
+            },
+                {
+                label:"Busy",
+                data:[
+                {% for item in agentlist[7][2] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#9395e7",
+                stack:8
+
+            },
+            {
+                label:"Failed",
+                data:[
+                {% for item in agentlist[7][3] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#e78498",
+                stack:8
+
+            },
+            {
+          label:"Answered",
+          data : [
+            {% for item in agentlist[8][0] %}
+               "{{ item }}",
+              {% endfor %}
+	    ],backgroundColor:'#6be976',
+                stack:9
+          },
+            {
+                label:"Not Answered",
+                data:[
+                {% for item in agentlist[8][1] %}
+               "{{ item }}",
+              {% endfor %}
+                ],backgroundColor: "#e396e7",
+            stack:9
+
+            },
+                {
+                label:"Busy",
+                data:[
+                {% for item in agentlist[8][2] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#9395e7",
+                stack:9
+
+            },
+            {
+                label:"Failed",
+                data:[
+                {% for item in agentlist[8][3] %}
+               "{{ item }}",
+              {% endfor %}
+                ],
+                    backgroundColor: "#e78498",
+                stack:9
+
+            },
+            ]
+
+
+      } //bardata
+
+
+var ctx = document.getElementById("myChart").getContext("2d");
+new Chart(ctx, {
+  type: 'groupableBar',
+  data: barData,
+  options: {
+      plugins:{
+                     datalabels:{
+                         display:function(context){
+                             return context.dataset.data[context.dataIndex] > 1;
+                         }
+                     }
+                 },
+    scales: {
+      yAxes: [{
+
+        stacked: true,
+      }]
+    }
+  }
+});
+
+
+
+    </script>
+  </center>
+</body>
+</html>
+{% endblock %}

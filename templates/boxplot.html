@@ -1,0 +1,89 @@
+
+{%  extends 'base.html' %}
+{% block content %}
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+
+    <style>
+        a{padding-left: 10px;
+        padding-right: 10px;}
+    </style>
+</head>
+<body>
+<center>
+<h1>{{ title }}</h1>
+{% if src =='inbound' %}
+
+
+        <a class="nav-link" href="/inboundhours">Time of Day</a>
+        <a class="nav-link" href="/inbounddays">Day of Week</a>
+        <a class="nav-link" href="/boxplotinbound">Call Durations</a>
+      {% elif src == 'all' %}
+          <a class="nav-link" href="/allhours">Time of Day</a>
+        <a class="nav-link" href="/alldays">Day of Week</a>
+        <a class="nav-link" href="/boxplotall">Call Durations</a>
+          <a class="nav-link" href="/callbreakdown">Call Breakdown</a>
+
+
+      {% else %}
+        <a class="nav-link" href="/outboundhours">Time of Day</a>
+        <a class="nav-link" href="/outbounddays">Day of Week</a>
+        <a class="nav-link" href="/boxplotoutbound">Call Durations</a>
+      {% endif %}
+</center>
+<div id="container" style="height: 600px; margin: auto; min-width: 400px; max-width: 1000px"></div>
+<script>
+
+
+Highcharts.chart('container', {
+
+    chart: {
+        type: 'boxplot'
+    },
+    title:{
+        text: 'Box Plot Chart for Duration'
+    },
+
+
+    legend: {
+        enabled: true
+    },
+
+    xAxis: {
+        categories: ["January 18'","February 18'","March 18'","April 18'","May 18'","June 18'","July 18'","August 18'","September 18'","October 18'","November 18'","December 18'","January 19'","February 19'","March 19'"],
+        title: {
+            text: 'Month'
+        }
+    },
+
+    yAxis: {
+        title: {
+            text: 'Duration'
+        },
+
+    },
+
+    series: [{
+        name: 'Duration',
+        data: [
+            {% for list in data %}
+                {{list}},
+            {% endfor %}
+        ],
+        tooltip: {
+            headerFormat: '<em>{point.key}</em><br/>'
+        }
+    },]
+
+});
+</script>
+</body>
+</html>
+
+{% endblock %}

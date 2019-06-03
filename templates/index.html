@@ -1,0 +1,59 @@
+{%  extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en" xmlns:border="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/default.css') }}">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Form</title>
+    <style>
+table {
+    float: left;
+}
+.round {
+  border-radius: 25px;
+  background: #77a5ad;
+  padding: 20px;
+  margin-top:10px;
+  margin-left: 150px;
+  width: 200px;
+  height: 150px;
+  display: inline-block
+}
+.roundtext {
+    margin-left:30px;
+}
+    </style>
+</head>
+<body>
+<div class="round">
+    <div class="roundtext">
+Total Calls Answered:
+        </div>
+    {{ totalanswered }}
+    <div prevday>
+        {{ prevanswered }}
+    </div>
+</div>
+<div class="round">
+    <div class="roundtext">
+Total Calls Missed:
+        </div>
+    {{ totalmissed }}
+    <div prevday>
+        {{ prevmissed }}
+    </div>
+</div>
+
+<div class="round">
+<div class="roundtext">
+Total Average Duration:
+        </div>
+    {{ avgdura }}
+    <div prevday>
+        {{ prevavg }}
+    </div>
+</div>
+</body>
+</html>
+{%  endblock %}
